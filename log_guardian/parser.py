@@ -1,9 +1,5 @@
-# log_guardian/parser.py
-
-# We import the logger we created so we can log issues.
 from .logger import get_logger
 
-# We get a logger instance specific to this module.
 log = get_logger(__name__)
 
 def parse_log_file(file_path):
