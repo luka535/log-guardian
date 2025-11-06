@@ -1,0 +1,6 @@
+2023-10-27 10:00:00 INFO: User 'admin' logged in successfully from IP 192.1.1.1.
+2023-10-27 10:01:15 WARNING: Disk space is running low 85% used.
+This is a bad line that should be skipped.
+2023-10-27 10:02:00 ERROR: Failed to connect to database 'prod_db' on host db.example.com.
+Another bad line.
+2023-10-27 10:05:30 DEBUG: Executed query 'SELECT * FROM users' in 15ms.
