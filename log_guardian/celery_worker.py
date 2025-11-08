@@ -9,14 +9,13 @@ from celery.utils.log import get_task_logger
 from .database import SessionLocal
 from .models import AnalysisReport, ReportStatus
 from .parser import parse_log_file
+from .config import settings
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379/0")
 
 celery_app = Celery(
     "log_guardian",
-    broker=CELERY_BROKER_URL,
-    backend=CELERY_RESULT_BACKEND,
+    broker=settings.CELERY_BROKER_URL,
+    backend=settings.CELERY_RESULT_BACKEND,
     include=["log_guardian.celery_worker"]
 )
 
