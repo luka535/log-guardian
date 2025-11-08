@@ -10,6 +10,7 @@ from .database import SessionLocal
 from .models import AnalysisReport, ReportStatus
 from .parser import parse_log_file
 from .config import settings
+from .analysis import analyze_log_data 
 
 
 celery_app = Celery(
@@ -32,7 +33,7 @@ def process_log_file(self, analysis_report_id: int, file_path: str):
     task_log.info(f"Starting analysis for report ID: {analysis_report_id} | File: {file_path}")
 
     db = SessionLocal()
-    
+    report = None 
     try:
         report = db.query(AnalysisReport).filter(AnalysisReport.id == analysis_report_id).first()
         if not report:
@@ -43,32 +44,18 @@ def process_log_file(self, analysis_report_id: int, file_path: str):
         db.commit()
 
         parsed_data = list(parse_log_file(file_path))
-
-        suspicious_keywords = ['phpmyadmin', 'wp-login', 'passwd']
-        results_summary = {
-            "total_lines_parsed": len(parsed_data),
-            "suspicious_entries_found": 0,
-            "suspicious_entries": []
-        }
-        
-        for entry in parsed_data:
-            for keyword in suspicious_keywords:
-                if keyword in entry.get("message", ""):
-                    results_summary["suspicious_entries_found"] += 1
-                    results_summary["suspicious_entries"].append(entry)
-                    break 
-
-        report.results = results_summary
+        analysis_results = analyze_log_data(parsed_data)
+        report.results = analysis_results
         report.status = ReportStatus.COMPLETED
         db.commit()
-        
+                
         task_log.info(f"Successfully completed analysis for report ID: {analysis_report_id}")
-        return f"Report {analysis_report_id} processed. Found {results_summary['suspicious_entries_found']} suspicious entries."
-
+        return f"Report {analysis_report_id} processed. Found {analysis_results['suspicious_entries_found']} suspicious entries."
+    
     except Exception as e:
         task_log.error(f"Analysis failed for report ID {analysis_report_id}: {e}", exc_info=True)
         
-        if 'report' in locals() and report:
+        if report:
             db.rollback()
             report.status = ReportStatus.FAILED
             report.results = {"error": str(e)}
