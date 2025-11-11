@@ -9,10 +9,9 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.dialects.postgresql import JSONB 
+from .config import settings
 
-
-DATABASE_URL = "postgresql+psycopg2://log_guardian_user:luka@localhost/log_guardian_db"
-engine = create_engine(DATABASE_URL, echo=False)
+engine = create_engine(settings.DATABASE_URL, echo=False)
 Base = declarative_base()
 
 class ReportStatus(enum.Enum):
