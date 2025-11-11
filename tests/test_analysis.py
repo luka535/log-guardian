@@ -45,10 +45,10 @@ def test_analysis_with_empty_input():
 def test_analysis_with_malformed_entry():
 
     sample_data = [
-        {'line_number': 1}, # Missing 'message' key
-        {'line_number': 2, 'message': None}, # Message is not a string
-        {'line_number': 3, 'message': 'Valid access to passwd page is not possible.'}, # Contains 'passwd'
-        {'line_number': 4, 'message': 12345} # Message is not a string
+        {'line_number': 1}, 
+        {'line_number': 2, 'message': None}, 
+        {'line_number': 3, 'message': 'Valid access to passwd page is not possible.'}, 
+        {'line_number': 4, 'message': 12345} 
     ]
 
     results = analyze_log_data(sample_data)
